@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.util.Objects;
+
 
 /**
  * Abstract AndrOBD plugin
@@ -166,10 +168,10 @@ public abstract class Plugin
      * @param context Context of intent handler
      * @param intent Intent object of identify request
      */
-    private void handleIdentify(Context context, Intent intent)
+    protected void handleIdentify(Context context, Intent intent)
     {
         // remember broadcasting host application
-        hostInfo = new PluginInfo( intent.getExtras());
+        hostInfo = new PluginInfo(Objects.requireNonNull(intent.getExtras()));
 
         // create identify response to broadcast origin
         Intent identifyIntent = new Intent(IDENTIFY);
