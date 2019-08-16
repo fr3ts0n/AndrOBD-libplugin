@@ -56,7 +56,7 @@ public class PluginHandler
         @Override
         public void onReceive(Context context, Intent intent)
         {
-            Log.d(toString(), "Broadcast received: " + intent);
+            Log.v(toString(), "Broadcast received: " + intent);
 
             String action = intent.getAction();
             if (Plugin.IDENTIFY.equals(action))
@@ -163,12 +163,12 @@ public class PluginHandler
 
         // get feature checkboxes
         CheckBox[] cb =
-                {
-                        infoView.findViewById(R.id.cbConfig),
-                        infoView.findViewById(R.id.cbAction),
-                        infoView.findViewById(R.id.cbDataList),
-                        infoView.findViewById(R.id.cbData),
-                };
+        {
+            infoView.findViewById(R.id.cbConfig),
+            infoView.findViewById(R.id.cbAction),
+            infoView.findViewById(R.id.cbDataList),
+            infoView.findViewById(R.id.cbData),
+        };
 
         // set checkbox checked state based on supported features
         for (int bit = 0; bit < 4; bit++)
@@ -240,7 +240,7 @@ public class PluginHandler
             Intent intent = new Intent(Plugin.ACTION);
             intent.setClassName(plugin.packageName, plugin.className);
             intent.putExtra(PluginInfo.Field.CLASS.toString(), plugin.className);
-            Log.i(toString(), ">ACTION: " + intent);
+            Log.d(toString(), ">ACTION: " + intent);
             getContext().startService(intent);
         }
     }
@@ -254,7 +254,7 @@ public class PluginHandler
             Intent intent = new Intent(Plugin.CONFIGURE);
             intent.setClassName(plugin.packageName, plugin.className);
             intent.putExtra(PluginInfo.Field.CLASS.toString(), plugin.className);
-            Log.i(toString(), ">CONFIGURE: " + intent);
+            Log.d(toString(), ">CONFIGURE: " + intent);
             getContext().startService(intent);
         }
     }
@@ -282,7 +282,7 @@ public class PluginHandler
                     && (plugin.features & PluginInfo.FEATURE_DATA) != 0)
             {
                 intent.setClassName(plugin.packageName, plugin.className);
-                Log.d(toString(), ">DATALIST: " + intent);
+                Log.v(toString(), ">DATALIST: " + intent);
                 getContext().startService(intent);
             }
         }
@@ -310,7 +310,7 @@ public class PluginHandler
                     && (plugin.features & PluginInfo.FEATURE_DATA) != 0)
             {
                 intent.setClassName(plugin.packageName, plugin.className);
-                Log.d(toString(), ">DATA: " + intent);
+                Log.v(toString(), ">DATA: " + intent);
                 getContext().startService(intent);
             }
         }
