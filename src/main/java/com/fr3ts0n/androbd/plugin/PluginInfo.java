@@ -81,6 +81,8 @@ public class PluginInfo
             features |= FEATURE_ACTION;
         if(Plugin.DataReceiver.class.isAssignableFrom(_class))
             features |= FEATURE_DATA;
+	if(Plugin.DataProvider.class.isAssignableFrom(_class))
+	    features |= FEATURE_DATAPROVISION;
     }
 
     /**
