@@ -1,5 +1,6 @@
 package com.fr3ts0n.androbd.plugin.mgr;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,27 +23,30 @@ import com.fr3ts0n.androbd.plugin.R;
 
 /**
  * Plugin handler
- *
+ * <p>
  * This class handles a list of detected plugins:
  * - Allow adding / deleting plugin instances
  * - Handle automatic plugin detection
  * - Provide display adapter of current plugin list
  * - Handle sending Intents to individual / all plugins
  */
-public class PluginHandler extends ArrayAdapter<PluginInfo>
-    implements Plugin.DataProvider
+public class PluginHandler
+        extends ArrayAdapter<PluginInfo>
+        implements Plugin.DataProvider
 {
-    static final PluginInfo myInfo = new PluginInfo( "AndrOBD",
-                                                     PluginHandler.class,
-                                                     "AndrOBD host application plugin handler",
-                                                     "Copyright (C) 2017 by fr3ts0n",
-                                                     "GPLV3+",
-                                                     "https://github.com/fr3ts0n/AndrOBD");
+    /**
+     * Plugin servicefor data reception
+     */
+    transient PluginDataService svc = new PluginDataService();
 
-    /** layout inflater */
+    /**
+     * layout inflater
+     */
     transient protected LayoutInflater mInflater;
 
-    /** Application preferences*/
+    /**
+     * Application preferences
+     */
     SharedPreferences mPrefs;
 
     /**
@@ -53,7 +57,10 @@ public class PluginHandler extends ArrayAdapter<PluginInfo>
         @Override
         public void onReceive(Context context, Intent intent)
         {
-            if(Plugin.IDENTIFY.equals(intent.getAction()))
+            Log.d(toString(), "Broadcast received: " + intent);
+
+            String action = intent.getAction();
+            if (Plugin.IDENTIFY.equals(action))
             {
                 PluginInfo plugin = new PluginInfo(intent.getExtras());
                 Log.i(toString(), "Plugin identified: " + plugin.toString());
@@ -64,6 +71,9 @@ public class PluginHandler extends ArrayAdapter<PluginInfo>
                 // set current enabled/disabled state (to stop disabled services)
                 setPluginEnabled(getPosition(plugin), plugin.enabled);
             }
+
+            intent.setClass(getContext(), PluginDataService.class);
+            context.startService(intent);
         }
     };
 
@@ -83,19 +93,34 @@ public class PluginHandler extends ArrayAdapter<PluginInfo>
         super(context, resource);
         // create layout inflater
         mInflater = (LayoutInflater) context
-            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         setup();
     }
 
+    /**
+     * external data receiver
+     */
+    public Plugin.DataReceiver getDataReceiver()
+    {
+        return svc.getDataReceiver();
+    }
+
+    public void setDataReceiver(Plugin.DataReceiver dataReceiver)
+    {
+        svc.setDataReceiver(dataReceiver);
+    }
+
     public void setup()
     {
         // register this handler as a receive filter
-        IntentFilter flt = new IntentFilter(Plugin.IDENTIFY);
-        // flt.addCategory(Plugin.REQUEST);
+        IntentFilter flt = new IntentFilter();
         flt.addCategory(Plugin.RESPONSE);
+        flt.addAction(Plugin.IDENTIFY);
+        flt.addAction(Plugin.DATALIST);
+        flt.addAction(Plugin.DATA);
         getContext().registerReceiver(receiver, flt);
 
         // trigger plugin search
@@ -107,8 +132,7 @@ public class PluginHandler extends ArrayAdapter<PluginInfo>
         try
         {
             getContext().unregisterReceiver(receiver);
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             Log.e(toString(), e.getMessage());
         }
@@ -120,50 +144,50 @@ public class PluginHandler extends ArrayAdapter<PluginInfo>
         PluginInfo info = getItem(position);
 
         View infoView;
-        if(convertView != null)
+        if (convertView != null)
             infoView = convertView;
         else
             infoView = mInflater.inflate(R.layout.plugininfo, parent, false);
 
         TextView tv;
-        tv = (TextView)infoView.findViewById(R.id.edName);
+        tv = infoView.findViewById(R.id.edName);
         tv.setEnabled(info.enabled);
         tv.setText(info.name);
 
-        tv = (TextView)infoView.findViewById(R.id.edClass);
+        tv = infoView.findViewById(R.id.edClass);
         tv.setEnabled(info.enabled);
         tv.setText(info.className);
 
-        tv = (TextView)infoView.findViewById(R.id.edDescription);
+        tv = infoView.findViewById(R.id.edDescription);
         tv.setEnabled(info.enabled);
         tv.setText(info.description);
 
         // get feature checkboxes
         CheckBox[] cb =
-        {
-            (CheckBox)infoView.findViewById(R.id.cbConfig),
-            (CheckBox)infoView.findViewById(R.id.cbAction),
-            (CheckBox)infoView.findViewById(R.id.cbDataList),
-            (CheckBox)infoView.findViewById(R.id.cbData),
-        };
+                {
+                        infoView.findViewById(R.id.cbConfig),
+                        infoView.findViewById(R.id.cbAction),
+                        infoView.findViewById(R.id.cbDataList),
+                        infoView.findViewById(R.id.cbData),
+                };
 
         // set checkbox checked state based on supported features
-        for( int bit = 0; bit < 4; bit++)
+        for (int bit = 0; bit < 4; bit++)
         {
             cb[bit].setChecked((info.features & (1 << bit)) != 0);
         }
 
         // enable / disable buttons based on supported features
         Button btn;
-        btn = (Button)infoView.findViewById(R.id.btnConfigure);
+        btn = infoView.findViewById(R.id.btnConfigure);
         btn.setEnabled(info.enabled && (info.features & PluginInfo.FEATURE_CONFIGURE) != 0);
 
-        btn = (Button)infoView.findViewById(R.id.btnAction);
+        btn = infoView.findViewById(R.id.btnAction);
         btn.setEnabled(info.enabled && (info.features & PluginInfo.FEATURE_ACTION) != 0);
 
         infoView.setActivated(info.enabled);
 
-        Switch swEnable = (Switch)infoView.findViewById(R.id.swEnable);
+        Switch swEnable = infoView.findViewById(R.id.swEnable);
         swEnable.setChecked(info.enabled);
 
         return infoView;
@@ -172,7 +196,7 @@ public class PluginHandler extends ArrayAdapter<PluginInfo>
     public void setPluginEnabled(int position, boolean enable)
     {
         // actively stop plugin service if switched off
-        if(!enable) stopPlugin(position);
+        if (!enable) stopPlugin(position);
 
         // set enabled state in plugin info
         PluginInfo plugin = getItem(position);
@@ -184,13 +208,13 @@ public class PluginHandler extends ArrayAdapter<PluginInfo>
         notifyDataSetChanged();
     }
 
-    public void identifyPlugins()
+    void identifyPlugins()
     {
         // send broadcast IDENTIFY
         Intent intent = new Intent(Plugin.IDENTIFY);
         intent.addCategory(Plugin.REQUEST);
-        intent.putExtras(myInfo.toBundle());
-        Log.i(toString(), "Request IDENTIFY: " + intent);
+        intent.putExtras(svc.getPluginInfo().toBundle());
+        Log.i(toString(), ">IDENTIFY: " + intent);
         getContext().sendBroadcast(intent);
     }
 
@@ -199,7 +223,7 @@ public class PluginHandler extends ArrayAdapter<PluginInfo>
      *
      * @param position List position of plugin
      */
-    public void stopPlugin(int position)
+    private void stopPlugin(int position)
     {
         Intent intent = new Intent();
         PluginInfo plugin = getItem(position);
@@ -208,30 +232,30 @@ public class PluginHandler extends ArrayAdapter<PluginInfo>
         getContext().stopService(intent);
     }
 
-    public void triggerAction(int position)
+    void triggerAction(int position)
     {
         PluginInfo plugin = getItem(position);
-        if(plugin.enabled
-           && (plugin.features & PluginInfo.FEATURE_ACTION) != 0)
+        if (plugin.enabled
+                && (plugin.features & PluginInfo.FEATURE_ACTION) != 0)
         {
             Intent intent = new Intent(Plugin.ACTION);
             intent.setClassName(plugin.packageName, plugin.className);
             intent.putExtra(PluginInfo.Field.CLASS.toString(), plugin.className);
-            Log.i(toString(), "Request ACTION: " + intent);
+            Log.i(toString(), ">ACTION: " + intent);
             getContext().startService(intent);
         }
     }
 
-    public void triggerConfiguration(int position)
+    void triggerConfiguration(int position)
     {
         PluginInfo plugin = getItem(position);
-        if(plugin.enabled
-           && (plugin.features & PluginInfo.FEATURE_CONFIGURE) != 0)
+        if (plugin.enabled
+                && (plugin.features & PluginInfo.FEATURE_CONFIGURE) != 0)
         {
             Intent intent = new Intent(Plugin.CONFIGURE);
             intent.setClassName(plugin.packageName, plugin.className);
             intent.putExtra(PluginInfo.Field.CLASS.toString(), plugin.className);
-            Log.i(toString(), "Request CONFIGURE: " + intent);
+            Log.i(toString(), ">CONFIGURE: " + intent);
             getContext().startService(intent);
         }
     }
@@ -251,15 +275,15 @@ public class PluginHandler extends ArrayAdapter<PluginInfo>
         // attach data to intent
         intent.putExtra(Plugin.EXTRA_DATA, csvData);
         // loop through all identified plugins
-        for (int i=0; i<getCount(); i++ )
+        for (int i = 0; i < getCount(); i++)
         {
             PluginInfo plugin = getItem(i);
             // If plugin is enabled and feature DATALIST is supported
-            if(plugin.enabled
-               && (plugin.features & PluginInfo.FEATURE_DATA) != 0)
+            if (plugin.enabled
+                    && (plugin.features & PluginInfo.FEATURE_DATA) != 0)
             {
                 intent.setClassName(plugin.packageName, plugin.className);
-                Log.d(toString(), "Send DATALIST: " + intent);
+                Log.d(toString(), ">DATALIST: " + intent);
                 getContext().startService(intent);
             }
         }
@@ -268,7 +292,7 @@ public class PluginHandler extends ArrayAdapter<PluginInfo>
     /**
      * Send data update to all enabled plugins which support DATA requests
      *
-     * @param key Key of data change
+     * @param key   Key of data change
      * @param value New value of data change
      */
     public void sendDataUpdate(String key, String value)
@@ -279,15 +303,15 @@ public class PluginHandler extends ArrayAdapter<PluginInfo>
         intent.putExtra(Plugin.EXTRA_DATA, String.format("%s=%s", key, value));
 
         // loop through all identified plugins
-        for (int i=0; i<getCount(); i++ )
+        for (int i = 0; i < getCount(); i++)
         {
             PluginInfo plugin = getItem(i);
             // If plugin is enabled and feature DATA is supported
-            if(plugin.enabled
-               && (plugin.features & PluginInfo.FEATURE_DATA) != 0)
+            if (plugin.enabled
+                    && (plugin.features & PluginInfo.FEATURE_DATA) != 0)
             {
                 intent.setClassName(plugin.packageName, plugin.className);
-                Log.d(toString(), "Send DATA: " + intent);
+                Log.d(toString(), ">DATA: " + intent);
                 getContext().startService(intent);
             }
         }
@@ -296,14 +320,15 @@ public class PluginHandler extends ArrayAdapter<PluginInfo>
     /**
      * Close all identified plugins
      */
-    public void closeAllPlugins()
+    void closeAllPlugins()
     {
         // loop through all identified plugins
-        for (int i=0; i<getCount(); i++ )
+        for (int i = 0; i < getCount(); i++)
         {
             stopPlugin(i);
         }
         // clear list of plugins
         clear();
     }
+
 }

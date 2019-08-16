@@ -27,6 +27,19 @@ public abstract class Plugin
     /** Parameters for DATALIST / DATA (content will be csv encoded) */
     public static final String EXTRA_DATA  = "com.fr3ts0n.androbd.plugin.extra.DATA";
 
+    /** Host application info */
+    protected PluginInfo hostInfo;
+
+    /** CSV fields for data list messages */
+    public enum CsvField
+    {
+        MNEMONIC,       /**< Mnemonic of data item */
+        DESCRIPTION,    /**< Description of data item */
+        MIN,            /**< minimum value */
+        MAX,            /**< maximum value */
+        UNITS,          /**< measurement units */
+    }
+    
     /**
      * Plugin supports configuration requests
      */
@@ -96,11 +109,6 @@ public abstract class Plugin
         void sendDataUpdate(String key, String value);
     }
 
-    /**
-     * Host application info
-     */
-    PluginInfo hostInfo;
-
     @Override
     public void onCreate()
     {
@@ -119,45 +127,59 @@ public abstract class Plugin
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-        int result = super.onStartCommand(intent, flags, startId);
+        super.onStartCommand(intent, flags, startId);
+
         if (intent != null)
         {
             final String action = intent.getAction();
             if(IDENTIFY.equals(action))
             {
-                Log.d(toString(), "Identify: " +  intent);
+                Log.d(toString(), "<IDENTIFY: " +  intent);
                 handleIdentify(getApplicationContext(),intent);
             }
 
-            if (ConfigurationHandler.class.isInstance(this) && CONFIGURE.equals(action))
+            if (CONFIGURE.equals(action)
+                && this instanceof ConfigurationHandler)
             {
-                Log.d(toString(), "Configuration: " +  intent);
+                Log.d(toString(), "<CONFIGURE: " +  intent);
                 ((ConfigurationHandler)this).performConfigure( );
             }
 
-            if (ActionHandler.class.isInstance(this) && ACTION.equals(action))
+            if (ACTION.equals(action)
+                && this instanceof ActionHandler)
             {
-                Log.d(toString(), "Action: " + intent);
+                Log.d(toString(), "<ACTION: " + intent);
                 ((ActionHandler)this).performAction( );
             }
 
-            if(DataReceiver.class.isInstance(this) && DATALIST.equals(action))
+            if(DATALIST.equals(action)
+               && this instanceof DataReceiver)
             {
-                Log.v(toString(), "Data list update: " + intent);
+                Log.d(toString(), "<DATALIST: " + intent);
                 String dataStr = intent.getStringExtra(EXTRA_DATA);
                 ((DataReceiver)this).onDataListUpdate( dataStr );
             }
 
-            if(DataReceiver.class.isInstance(this) &&  DATA.equals(action))
+            if(DATA.equals(action)
+               && this instanceof DataReceiver)
             {
-                Log.v(toString(), "Data update: " + intent);
+                Log.d(toString(), "<DATA: " + intent);
                 String dataStr = intent.getStringExtra(EXTRA_DATA);
-                String params[] = dataStr.split("=");
-                ((DataReceiver)this).onDataUpdate( params[0], params[1] );
+                if(dataStr != null)
+                {
+                    Log.v(toString(), dataStr);
+                    String params[] = dataStr.split("=");
+                    ((DataReceiver)this).onDataUpdate( params[0], params[1] );
+                }
+                else
+                {
+                    Log.w(toString(), "DATA empty");
+                }
             }
         }
 
-        return result;
+        // ensure plugin lifecycle until stopService() call
+        return START_STICKY;
     }
 
     /**
@@ -166,16 +188,16 @@ public abstract class Plugin
      * @param context Context of intent handler
      * @param intent Intent object of identify request
      */
-    private void handleIdentify(Context context, Intent intent)
+    public void handleIdentify(Context context, Intent intent)
     {
         // remember broadcasting host application
-        hostInfo = new PluginInfo( intent.getExtras());
+        hostInfo = new PluginInfo(intent.getExtras());
 
         // create identify response to broadcast origin
         Intent identifyIntent = new Intent(IDENTIFY);
         identifyIntent.addCategory(RESPONSE);
         identifyIntent.putExtras(getPluginInfo().toBundle());
-        Log.d(toString(), "Sending response: " + identifyIntent);
+        Log.d(toString(), ">IDENTIFY: " + identifyIntent);
         sendBroadcast(identifyIntent);
     }
     

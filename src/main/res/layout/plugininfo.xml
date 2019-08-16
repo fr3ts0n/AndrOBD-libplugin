@@ -36,7 +36,8 @@
         android:id="@+id/edClass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="class"/>
+        android:text="class"
+        android:textSize="10sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
