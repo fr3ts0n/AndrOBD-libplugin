@@ -1,6 +1,5 @@
 package com.fr3ts0n.androbd.plugin.mgr;
 
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;

@@ -17,8 +17,9 @@ import com.fr3ts0n.androbd.plugin.R;
  * - Allow trigger configuration of individual plugin
  * - Allow manual triggering plugin action
  */
-public abstract class PluginManager extends ListActivity
-    implements Plugin.DataReceiver
+public abstract class PluginManager
+        extends ListActivity
+        implements Plugin.DataReceiver
 {
     public static PluginHandler pluginHandler = null;
 
