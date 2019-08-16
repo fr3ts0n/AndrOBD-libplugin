@@ -138,28 +138,28 @@ public abstract class Plugin
             final String action = intent.getAction();
             if(IDENTIFY.equals(action))
             {
-                Log.d(toString(), "<IDENTIFY: " +  intent);
+                Log.v(toString(), "<IDENTIFY: " +  intent);
                 handleIdentify(getApplicationContext(),intent);
             }
 
             if (CONFIGURE.equals(action)
                 && this instanceof ConfigurationHandler)
             {
-                Log.d(toString(), "<CONFIGURE: " +  intent);
+                Log.v(toString(), "<CONFIGURE: " +  intent);
                 ((ConfigurationHandler)this).performConfigure( );
             }
 
             if (ACTION.equals(action)
                 && this instanceof ActionHandler)
             {
-                Log.d(toString(), "<ACTION: " + intent);
+                Log.v(toString(), "<ACTION: " + intent);
                 ((ActionHandler)this).performAction( );
             }
 
             if(DATALIST.equals(action)
                && this instanceof DataReceiver)
             {
-                Log.d(toString(), "<DATALIST: " + intent);
+                Log.v(toString(), "<DATALIST: " + intent);
                 String dataStr = intent.getStringExtra(EXTRA_DATA);
                 ((DataReceiver)this).onDataListUpdate( dataStr );
             }
@@ -167,12 +167,12 @@ public abstract class Plugin
             if(DATA.equals(action)
                && this instanceof DataReceiver)
             {
-                Log.d(toString(), "<DATA: " + intent);
+                Log.v(toString(), "<DATA: " + intent);
                 String dataStr = intent.getStringExtra(EXTRA_DATA);
                 if(dataStr != null)
                 {
                     Log.v(toString(), dataStr);
-                    String params[] = dataStr.split("=");
+                    String[] params = dataStr.split("=");
                     ((DataReceiver)this).onDataUpdate( params[0], params[1] );
                 }
                 else
@@ -192,17 +192,16 @@ public abstract class Plugin
      * @param context Context of intent handler
      * @param intent Intent object of identify request
      */
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     protected void handleIdentify(Context context, Intent intent)
     {
         // remember broadcasting host application
-        hostInfo = new PluginInfo(Objects.requireNonNull(intent.getExtras()));
+        hostInfo = new PluginInfo(intent.getExtras());
 
         // create identify response to broadcast origin
         Intent identifyIntent = new Intent(IDENTIFY);
         identifyIntent.addCategory(RESPONSE);
         identifyIntent.putExtras(getPluginInfo().toBundle());
-        Log.d(toString(), ">IDENTIFY: " + identifyIntent);
+        Log.v(toString(), ">IDENTIFY: " + identifyIntent);
         sendBroadcast(identifyIntent);
     }
     
