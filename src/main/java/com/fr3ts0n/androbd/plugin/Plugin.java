@@ -1,8 +1,10 @@
 package com.fr3ts0n.androbd.plugin;
 
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -131,30 +133,30 @@ public abstract class Plugin
                 handleIdentify(getApplicationContext(),intent);
             }
 
-            if (ConfigurationHandler.class.isInstance(this) && CONFIGURE.equals(action))
+            if (this instanceof ConfigurationHandler && CONFIGURE.equals(action))
             {
                 Log.d(toString(), "Configuration: " +  intent);
                 ((ConfigurationHandler)this).performConfigure( );
             }
 
-            if (ActionHandler.class.isInstance(this) && ACTION.equals(action))
+            if (this instanceof ActionHandler && ACTION.equals(action))
             {
                 Log.d(toString(), "Action: " + intent);
                 ((ActionHandler)this).performAction( );
             }
 
-            if(DataReceiver.class.isInstance(this) && DATALIST.equals(action))
+            if(this instanceof DataReceiver && DATALIST.equals(action))
             {
                 Log.v(toString(), "Data list update: " + intent);
                 String dataStr = intent.getStringExtra(EXTRA_DATA);
                 ((DataReceiver)this).onDataListUpdate( dataStr );
             }
 
-            if(DataReceiver.class.isInstance(this) &&  DATA.equals(action))
+            if(this instanceof DataReceiver &&  DATA.equals(action))
             {
                 Log.v(toString(), "Data update: " + intent);
                 String dataStr = intent.getStringExtra(EXTRA_DATA);
-                String params[] = dataStr.split("=");
+                String[] params = dataStr.split("=");
                 ((DataReceiver)this).onDataUpdate( params[0], params[1] );
             }
         }
@@ -168,6 +170,7 @@ public abstract class Plugin
      * @param context Context of intent handler
      * @param intent Intent object of identify request
      */
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     protected void handleIdentify(Context context, Intent intent)
     {
         // remember broadcasting host application
