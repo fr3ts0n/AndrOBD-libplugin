@@ -1,14 +1,10 @@
 package com.fr3ts0n.androbd.plugin;
 
-import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
-
-import java.util.Objects;
 
 
 /**
@@ -33,6 +29,9 @@ public abstract class Plugin
 
     /** Host application info */
     protected PluginInfo hostInfo;
+
+    /** remember if header was sent already */
+    protected boolean headerSent = false;
 
     /** CSV fields for data list messages */
     public enum CsvField
@@ -186,6 +185,12 @@ public abstract class Plugin
         return START_STICKY;
     }
 
+    @Override
+    public IBinder onBind(Intent intent)
+    {
+        return null;
+    }
+
     /**
      * Handle IDENTIFY intent
      *
@@ -204,13 +209,36 @@ public abstract class Plugin
         Log.v(toString(), ">IDENTIFY: " + identifyIntent);
         sendBroadcast(identifyIntent);
     }
-    
-    @Override
-    public IBinder onBind(Intent intent)
+
+    public void sendDataList(String csvData)
     {
-        return null;
+        // If plugin is enabled and feature DATA is supported
+        if (!headerSent)
+        {
+            Intent intent = new Intent(Plugin.DATALIST);
+            intent.addCategory(Plugin.RESPONSE);
+
+            // attach data to intent
+            intent.putExtra(Plugin.EXTRA_DATA, csvData);
+            Log.d(toString(), ">DATALIST: " + intent);
+            getBaseContext().sendBroadcast(intent);
+            // remember that header is sent
+            headerSent = true;
+        }
     }
-    
+
+    public void sendDataUpdate(String key, String value)
+    {
+        // If feature DATA is supported
+        Intent intent = new Intent(Plugin.DATA);
+        intent.addCategory(Plugin.RESPONSE);
+
+        // attach data to intent
+        intent.putExtra(Plugin.EXTRA_DATA, String.format("%s=%s", key, value));
+        Log.d(toString(), ">DATA: " + intent);
+        getBaseContext().sendBroadcast(intent);
+    }
+
     /**
      * get own plugin info
      */
