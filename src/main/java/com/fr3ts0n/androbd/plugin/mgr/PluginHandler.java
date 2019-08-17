@@ -36,22 +36,22 @@ public class PluginHandler
     /**
      * Plugin servicefor data reception
      */
-    transient PluginDataService svc = new PluginDataService();
+    private transient PluginDataService svc = new PluginDataService();
 
     /**
      * layout inflater
      */
-    transient protected LayoutInflater mInflater;
+    private transient LayoutInflater mInflater;
 
     /**
      * Application preferences
      */
-    SharedPreferences mPrefs;
+    private SharedPreferences mPrefs;
 
     /**
      * the receiver to receive IDENTIFY responses
      */
-    BroadcastReceiver receiver = new BroadcastReceiver()
+    private BroadcastReceiver receiver = new BroadcastReceiver()
     {
         @Override
         public void onReceive(Context context, Intent intent)
@@ -76,18 +76,21 @@ public class PluginHandler
         }
     };
 
-    public PluginHandler(Context context)
+    /**
+     * Constructor
+     *  @param context  The current context.
+     */
+    PluginHandler(Context context)
     {
         this(context, R.layout.plugininfo);
     }
 
     /**
      * Constructor
-     *
-     * @param context  The current context.
-     * @param resource The resource ID for a layout file containing a TextView to use when
+     *  @param context  The current context.
+     *  @param resource The resource ID for a layout file containing a TextView to use when
      */
-    public PluginHandler(Context context, int resource)
+    PluginHandler(Context context, int resource)
     {
         super(context, resource);
         // create layout inflater
@@ -100,19 +103,29 @@ public class PluginHandler
     }
 
     /**
-     * external data receiver
+     * get external data receiver
      */
-    public Plugin.DataReceiver getDataReceiver()
+    Plugin.DataReceiver getDataReceiver()
     {
         return svc.getDataReceiver();
     }
 
-    public void setDataReceiver(Plugin.DataReceiver dataReceiver)
+    /**
+     * Set external data receiver component
+     *
+     * @param dataReceiver external data receiver component
+     */
+    void setDataReceiver(Plugin.DataReceiver dataReceiver)
     {
         svc.setDataReceiver(dataReceiver);
     }
 
-    public void setup()
+    /**
+     * Set up all components
+     * - register receiver
+     * - initiate plugin identification
+     */
+    void setup()
     {
         // register this handler as a receive filter
         IntentFilter flt = new IntentFilter();
@@ -126,8 +139,17 @@ public class PluginHandler
         identifyPlugins();
     }
 
-    public void cleanup()
+    /**
+     * Clean up all components
+     * - close all plugins
+     * - unregister receiver
+     */
+    void cleanup()
     {
+        // close all olugins
+        closeAllPlugins();
+
+        // unregister receiver
         try
         {
             getContext().unregisterReceiver(receiver);
@@ -192,7 +214,16 @@ public class PluginHandler
         return infoView;
     }
 
-    public void setPluginEnabled(int position, boolean enable)
+    /**
+     * enable/disable specified plugin
+     *
+     * Enabling triggers a action event to the plugin.
+     * Disabling stops the plugin service
+     *
+     * @param position position of plugin within array
+     * @param enable flag if to enable (@ref true) / disable (@ref false) the plugin
+     */
+    private void setPluginEnabled(int position, boolean enable)
     {
         // set enabled state in plugin info
         PluginInfo plugin = getItem(position);
@@ -215,7 +246,10 @@ public class PluginHandler
         }
     }
 
-    void identifyPlugins()
+    /**
+     * Send broadcast message to identify installed plugins
+     */
+    private void identifyPlugins()
     {
         // send broadcast IDENTIFY
         Intent intent = new Intent(Plugin.IDENTIFY);
@@ -239,7 +273,14 @@ public class PluginHandler
         getContext().stopService(intent);
     }
 
-    void triggerAction(int position)
+    /**
+     * Initiate ACTION of specified plugin
+     *
+     * This sends a ACTION message to the plugin
+     *
+     * @param position List position of plugin
+     */
+    private void triggerAction(int position)
     {
         PluginInfo plugin = getItem(position);
         if (plugin.enabled
@@ -253,6 +294,13 @@ public class PluginHandler
         }
     }
 
+    /**
+     * Initiate configuration dialog of spcified plugin
+     *
+     * This sends a CONFIGURE message to the plugin
+     *
+     * @param position List position of plugin
+     */
     void triggerConfiguration(int position)
     {
         PluginInfo plugin = getItem(position);

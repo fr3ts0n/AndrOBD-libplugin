@@ -2,8 +2,6 @@ package com.fr3ts0n.androbd.plugin.mgr;
 
 import android.app.ListActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Switch;
 
 import com.fr3ts0n.androbd.plugin.Plugin;
 import com.fr3ts0n.androbd.plugin.R;
@@ -37,7 +35,6 @@ public abstract class PluginManager
     @Override
     protected void onDestroy()
     {
-        pluginHandler.closeAllPlugins();
         pluginHandler.cleanup();
         pluginHandler = null;
         super.onDestroy();
@@ -50,29 +47,5 @@ public abstract class PluginManager
     {
         setContentView(R.layout.content_main);
         setListAdapter(pluginHandler);
-    }
-
-    public void sendIdentify(View view)
-    {
-        pluginHandler.clear();
-        pluginHandler.identifyPlugins();
-    }
-
-    public void sendConfigure(View view)
-    {
-        int pos = getListView().getPositionForView(view);
-        pluginHandler.triggerConfiguration(pos);
-    }
-
-    public void sendPerformAction(View view)
-    {
-        int pos = getListView().getPositionForView(view);
-        pluginHandler.triggerAction(pos);
-    }
-
-    public void setPluginEnabled(View view)
-    {
-        int pos = getListView().getPositionForView(view);
-        pluginHandler.setPluginEnabled(pos, ((Switch) view).isChecked());
     }
 }
