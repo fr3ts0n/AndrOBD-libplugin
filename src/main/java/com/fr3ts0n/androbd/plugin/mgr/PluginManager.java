@@ -2,6 +2,8 @@ package com.fr3ts0n.androbd.plugin.mgr;
 
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Switch;
 
 import com.fr3ts0n.androbd.plugin.Plugin;
 import com.fr3ts0n.androbd.plugin.R;
@@ -15,7 +17,7 @@ import com.fr3ts0n.androbd.plugin.R;
  * - Allow trigger configuration of individual plugin
  * - Allow manual triggering plugin action
  */
-public abstract class PluginManager
+public class PluginManager
         extends ListActivity
         implements Plugin.DataReceiver
 {
@@ -25,6 +27,8 @@ public abstract class PluginManager
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        // create a new PluginHandler
         if(pluginHandler == null)
         {
             pluginHandler = new PluginHandler(this);
@@ -47,5 +51,61 @@ public abstract class PluginManager
     {
         setContentView(R.layout.content_main);
         setListAdapter(pluginHandler);
+    }
+
+    /**
+     * Dialog / view handler of IDENTIFY button
+     *
+     * @param view view which triggers the event
+     */
+    public void sendIdentify(View view)
+    {
+        pluginHandler.clear();
+        pluginHandler.identifyPlugins();
+    }
+
+    /**
+     * Dialog / view handler of CONFIG button
+     *
+     * @param view view which triggers the event
+     */
+    public void sendConfigure(View view)
+    {
+        int pos = getListView().getPositionForView(view);
+        pluginHandler.triggerConfiguration(pos);
+    }
+
+    /**
+     * Dialog / view handler of ACTION button
+     *
+     * @param view view which triggers the event
+     */
+    public void sendPerformAction(View view)
+    {
+        int pos = getListView().getPositionForView(view);
+        pluginHandler.triggerAction(pos);
+    }
+
+    /**
+     * Dialog / view handler of Enable/Disable switch
+     *
+     * @param view view which triggers the event
+     */
+    public void setPluginEnabled(View view)
+    {
+        int pos = getListView().getPositionForView(view);
+        pluginHandler.setPluginEnabled(pos, ((Switch) view).isChecked());
+    }
+
+    @Override
+    public void onDataListUpdate(String csvString)
+    {
+        // Dummy implementation to be overridden
+    }
+
+    @Override
+    public void onDataUpdate(String key, String value)
+    {
+        // Dummy implementation to be overridden
     }
 }

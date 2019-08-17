@@ -6,6 +6,14 @@ import android.content.Intent;
 import com.fr3ts0n.androbd.plugin.Plugin;
 import com.fr3ts0n.androbd.plugin.PluginInfo;
 
+/**
+ * PluginDataService
+ * <p>
+ * This class implements a host-sided plugin to allow data reception
+ * from other plugins.
+ * The handling of received data is forwarded to a external data receiver
+ * which must be provided by the application side.
+ */
 public class PluginDataService
         extends Plugin
         implements Plugin.DataReceiver
@@ -36,6 +44,11 @@ public class PluginDataService
         return dataReceiver;
     }
 
+    /**
+     * Register external data receiver
+     *
+     * @param dataReceiver External data receiver to handle data updates
+     */
     public void setDataReceiver(Plugin.DataReceiver dataReceiver)
     {
         PluginDataService.dataReceiver = dataReceiver;

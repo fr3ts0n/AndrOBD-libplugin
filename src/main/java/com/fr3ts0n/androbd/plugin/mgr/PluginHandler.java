@@ -223,7 +223,7 @@ public class PluginHandler
      * @param position position of plugin within array
      * @param enable flag if to enable (@ref true) / disable (@ref false) the plugin
      */
-    private void setPluginEnabled(int position, boolean enable)
+    void setPluginEnabled(int position, boolean enable)
     {
         // set enabled state in plugin info
         PluginInfo plugin = getItem(position);
@@ -249,7 +249,7 @@ public class PluginHandler
     /**
      * Send broadcast message to identify installed plugins
      */
-    private void identifyPlugins()
+    void identifyPlugins()
     {
         // send broadcast IDENTIFY
         Intent intent = new Intent(Plugin.IDENTIFY);
@@ -280,7 +280,7 @@ public class PluginHandler
      *
      * @param position List position of plugin
      */
-    private void triggerAction(int position)
+    void triggerAction(int position)
     {
         PluginInfo plugin = getItem(position);
         if (plugin.enabled
