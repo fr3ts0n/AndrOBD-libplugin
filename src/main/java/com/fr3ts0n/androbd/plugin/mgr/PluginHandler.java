@@ -194,9 +194,6 @@ public class PluginHandler
 
     public void setPluginEnabled(int position, boolean enable)
     {
-        // actively stop plugin service if switched off
-        if (!enable) stopPlugin(position);
-
         // set enabled state in plugin info
         PluginInfo plugin = getItem(position);
         plugin.enabled = enable;
@@ -205,6 +202,17 @@ public class PluginHandler
 
         // notify about changes to re-trigger display
         notifyDataSetChanged();
+
+        if (enable)
+        {
+            // initiate plugin action
+            triggerAction(position);
+        }
+        else
+        {
+            // actively stop plugin service if switched off
+            stopPlugin(position);
+        }
     }
 
     void identifyPlugins()
