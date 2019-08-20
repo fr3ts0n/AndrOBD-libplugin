@@ -130,7 +130,7 @@ public abstract class Plugin
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-        super.onStartCommand(intent, flags, startId);
+        int result = super.onStartCommand(intent, flags, startId);
 
         if (intent != null)
         {
@@ -182,7 +182,7 @@ public abstract class Plugin
         }
 
         // ensure plugin lifecycle until stopService() call
-        return START_STICKY;
+        return result;
     }
 
     @Override

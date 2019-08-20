@@ -102,6 +102,25 @@ public class PluginHandler
         setup();
     }
 
+    @Override
+    public void clear()
+    {
+        closeAllPlugins();
+        super.clear();
+    }
+
+    /**
+     * Close all identified plugins
+     */
+    private void closeAllPlugins()
+    {
+        // loop through all identified plugins
+        for (int i = 0; i < getCount(); i++)
+        {
+            stopPlugin(i);
+        }
+    }
+
     /**
      * get external data receiver
      */
@@ -146,9 +165,6 @@ public class PluginHandler
      */
     void cleanup()
     {
-        // close all olugins
-        closeAllPlugins();
-
         // unregister receiver
         try
         {
@@ -157,6 +173,9 @@ public class PluginHandler
         {
             Log.e(toString(), e.getMessage());
         }
+
+        // Clear all plugins
+        clear();
     }
 
     @Override
@@ -371,19 +390,4 @@ public class PluginHandler
             }
         }
     }
-
-    /**
-     * Close all identified plugins
-     */
-    void closeAllPlugins()
-    {
-        // loop through all identified plugins
-        for (int i = 0; i < getCount(); i++)
-        {
-            stopPlugin(i);
-        }
-        // clear list of plugins
-        clear();
-    }
-
 }
