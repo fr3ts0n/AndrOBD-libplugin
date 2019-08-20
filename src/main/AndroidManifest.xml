@@ -3,7 +3,6 @@
           package="com.fr3ts0n.androbd.plugin">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
 
     <application
         android:allowBackup="true"
@@ -18,8 +17,7 @@
 
         <service android:name=".mgr.PluginDataService"
             android:enabled="true"
-            android:exported="true">
-        </service>
+            android:exported="true" />
     </application>
 
 </manifest>
