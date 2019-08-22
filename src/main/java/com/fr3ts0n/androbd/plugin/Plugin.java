@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.util.Log;
 
 
@@ -26,6 +27,11 @@ public abstract class Plugin
 
     /** Parameters for DATALIST / DATA (content will be csv encoded) */
     public static final String EXTRA_DATA  = "com.fr3ts0n.androbd.plugin.extra.DATA";
+
+    /** The system power manager */
+    PowerManager mgr;
+    /** Wake lock to keep service running with screen off */
+    PowerManager.WakeLock wakeLock;
 
     /** Host application info */
     protected PluginInfo hostInfo;
@@ -113,9 +119,23 @@ public abstract class Plugin
     }
 
     @Override
+    public void onDestroy()
+    {
+        /* Release wake lock since service shall be stopped ... */
+        wakeLock.release();
+
+        super.onDestroy();
+    }
+
+    @Override
     public void onCreate()
     {
         super.onCreate();
+        /* Aquire wake lock to keep service running even with screen off */
+        mgr = (PowerManager)getSystemService(Context.POWER_SERVICE);
+        wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                                   getClass().getSimpleName().concat(":WakeLock"));
+        wakeLock.acquire();
     }
 
     /**
