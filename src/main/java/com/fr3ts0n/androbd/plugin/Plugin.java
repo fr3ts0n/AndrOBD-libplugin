@@ -118,24 +118,24 @@ public abstract class Plugin
         void sendDataUpdate(String key, String value);
     }
 
-    @Override
+	@Override
+	public void onCreate()
+	{
+		super.onCreate();
+		/* Aquire wake lock to keep service running even with screen off */
+		mgr = (PowerManager)getSystemService(Context.POWER_SERVICE);
+		wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+		                           getClass().getSimpleName().concat(":WakeLock"));
+		wakeLock.acquire();
+	}
+
+	@Override
     public void onDestroy()
     {
         /* Release wake lock since service shall be stopped ... */
         wakeLock.release();
 
         super.onDestroy();
-    }
-
-    @Override
-    public void onCreate()
-    {
-        super.onCreate();
-        /* Aquire wake lock to keep service running even with screen off */
-        mgr = (PowerManager)getSystemService(Context.POWER_SERVICE);
-        wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                                   getClass().getSimpleName().concat(":WakeLock"));
-        wakeLock.acquire();
     }
 
     /**
@@ -212,6 +212,23 @@ public abstract class Plugin
     }
 
     /**
+     * Get a translated string from resources by it's name
+     * (rather than by it's resource ID)
+     *
+     * @param context Context of service / application to use resources from
+     * @param strName Name of string resource to get
+     *
+     * @return Translated resource string
+     */
+    protected static String getStringResourceByName(Context context, String strName)
+    {
+        return context.getString(context.getResources()
+                                        .getIdentifier(strName,
+                                                       "string",
+                                                       context.getPackageName()));
+    }
+
+    /**
      * Handle IDENTIFY intent
      *
      * @param context Context of intent handler
@@ -241,7 +258,7 @@ public abstract class Plugin
             // attach data to intent
             intent.putExtra(Plugin.EXTRA_DATA, csvData);
             Log.d(toString(), ">DATALIST: " + intent);
-            getBaseContext().sendBroadcast(intent);
+            sendBroadcast(intent);
             // remember that header is sent
             headerSent = true;
         }
@@ -256,7 +273,7 @@ public abstract class Plugin
         // attach data to intent
         intent.putExtra(Plugin.EXTRA_DATA, String.format("%s=%s", key, value));
         Log.d(toString(), ">DATA: " + intent);
-        getBaseContext().sendBroadcast(intent);
+        sendBroadcast(intent);
     }
 
     /**

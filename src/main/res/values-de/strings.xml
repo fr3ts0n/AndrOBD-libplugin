@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="donation">Projekt unterstützen …</string>
+    <string name="release_history">Versionen …</string>
     <string name="configure">Konfiguration</string>
     <string name="perform_action">Ausführen</string>
     <string name="identify_plugins">Plugins suchen</string>
