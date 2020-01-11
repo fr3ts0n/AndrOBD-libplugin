@@ -3,7 +3,7 @@
                   android:icon="@android:drawable/ic_menu_manage"
                   android:title="@string/app_name">
     <PreferenceScreen
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@android:drawable/ic_menu_info_details"
         android:summary="@string/app_version"
         android:title="@string/app_name"
         >

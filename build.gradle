@@ -12,7 +12,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            resValue "string", "app_version", defaultConfig.versionName
+        }
+
         release {
+            resValue "string", "app_version", defaultConfig.versionName
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
