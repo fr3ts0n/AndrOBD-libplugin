@@ -1,14 +1,13 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     defaultConfig {
         minSdkVersion 15
         // SDK 25 to allow background service mechanism for plugins
         targetSdkVersion 25
         versionCode 10100
         versionName '1.1.0'
-
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         lintOptions {
