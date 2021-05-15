@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="configure">Configure</string>
     <string name="perform_action">Perform action</string>
@@ -5,7 +6,7 @@
     <string name="app_name" translatable="false">AndrOBD plugin framework</string>
     <string name="copyright_fr3ts0n" translatable="false">Copyright © 2019 by fr3ts0n</string>
     <string name="url_app_mainpage" translatable="false">https://github.com/fr3ts0n/AndrOBD-Plugin</string>
-    <string name="release_history">Release History …</string>
+    <string name="release_history">Release history …</string>
     <string name="url_app_releases" translatable="false">https://github.com/fr3ts0n/AndrOBD-Plugin/releases</string>
     <string name="donation">Support project …</string>
 </resources>
