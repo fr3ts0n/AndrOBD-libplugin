@@ -1,2 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="donation">Podpri projekt …</string>
+    <string name="release_history">Zgodovina različic …</string>
+    <string name="identify_plugins">Zaznaj vtičnike</string>
+    <string name="perform_action">Izvedi dejanje</string>
+    <string name="configure">Konfiguriraj</string>
+</resources>
