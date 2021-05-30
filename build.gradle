@@ -1,5 +1,22 @@
 apply plugin: 'com.android.library'
 
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.2.1'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
 android {
     compileSdkVersion 30
     defaultConfig {
@@ -30,7 +47,4 @@ android {
     }
     productFlavors {
     }
-}
-
-dependencies {
 }
