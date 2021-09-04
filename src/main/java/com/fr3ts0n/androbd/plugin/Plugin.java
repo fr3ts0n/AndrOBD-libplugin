@@ -236,6 +236,9 @@ public abstract class Plugin
      */
     protected void handleIdentify(Context context, Intent intent)
     {
+        // the host application may have restarted since we last sent data headers
+        headerSent = false;
+
         // remember broadcasting host application
         hostInfo = new PluginInfo(intent.getExtras());
 
