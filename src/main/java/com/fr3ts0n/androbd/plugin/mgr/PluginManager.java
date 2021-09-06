@@ -2,6 +2,7 @@ package com.fr3ts0n.androbd.plugin.mgr;
 
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Switch;
 
@@ -34,6 +35,23 @@ public class PluginManager
             pluginHandler = new PluginHandler(this);
             pluginHandler.setDataReceiver(this);
         }
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        // discover plugins after showing the activity
+        // before onResume completes, the app is still in the background and can't start services
+        new Handler().post(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                pluginHandler.setup();
+            }
+        });
     }
 
     @Override
