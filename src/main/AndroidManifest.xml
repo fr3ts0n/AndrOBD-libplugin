@@ -16,4 +16,10 @@
 
     </application>
 
+    <queries>
+        <!-- Search for plugins -->
+        <intent>
+            <action android:name="com.fr3ts0n.androbd.plugin.IDENTIFY" />
+        </intent>
+    </queries>
 </manifest>

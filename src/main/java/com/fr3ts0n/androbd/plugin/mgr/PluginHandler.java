@@ -1,10 +1,12 @@
 package com.fr3ts0n.androbd.plugin.mgr;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +21,8 @@ import android.widget.TextView;
 import com.fr3ts0n.androbd.plugin.Plugin;
 import com.fr3ts0n.androbd.plugin.PluginInfo;
 import com.fr3ts0n.androbd.plugin.R;
+
+import java.util.List;
 
 /**
  * Plugin handler
@@ -274,8 +278,18 @@ public class PluginHandler
         Intent intent = new Intent(Plugin.IDENTIFY);
         intent.addCategory(Plugin.REQUEST);
         intent.putExtras(svc.getPluginInfo().toBundle());
-        Log.i(toString(), ">IDENTIFY: " + intent);
-        getContext().sendBroadcast(intent);
+
+        List<ResolveInfo> receiverPlugins = getContext().getPackageManager().queryBroadcastReceivers(intent, 0);
+        for (ResolveInfo plugin: receiverPlugins)
+        {
+            if (plugin.activityInfo != null)
+            {
+                ComponentName component = new ComponentName(plugin.activityInfo.packageName, plugin.activityInfo.name);
+                Intent explicitIntent = intent.setComponent(component);
+                Log.i(toString(), ">IDENTIFY: " + intent);
+                getContext().sendBroadcast(explicitIntent);
+            }
+        }
     }
 
     /**
