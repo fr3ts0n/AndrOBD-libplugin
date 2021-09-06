@@ -1,10 +1,14 @@
 package com.fr3ts0n.androbd.plugin.mgr;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +23,12 @@ import android.widget.TextView;
 import com.fr3ts0n.androbd.plugin.Plugin;
 import com.fr3ts0n.androbd.plugin.PluginInfo;
 import com.fr3ts0n.androbd.plugin.R;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Plugin handler
@@ -65,8 +75,8 @@ public class PluginHandler
                 Log.i(toString(), "Plugin identified: " + plugin.toString());
                 // get preferred enable/disable state from settings
                 plugin.enabled = mPrefs.getBoolean(plugin.className, true);
-                // add plugin to list
-                add(plugin);
+                // add (or replace) plugin in the list
+                upsert(plugin);
                 // set current enabled/disabled state (to stop disabled services)
                 setPluginEnabled(getPosition(plugin), plugin.enabled);
             }
@@ -75,6 +85,47 @@ public class PluginHandler
             context.startService(intent);
         }
     };
+
+    /**
+     * the listener to receive bindService callbacks
+     */
+    private class BoundServiceConnection implements ServiceConnection
+    {
+        private final String name;
+        public BoundServiceConnection(String name)
+        {
+            this.name = name;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service)
+        {
+            Log.i(toString(), "Successful binding to " + this.name);
+        }
+
+        @Override
+        public void onNullBinding(ComponentName name)
+        {
+            Log.i(toString(), "Successful null binding to " + this.name);
+        }
+
+        @Override
+        public void onBindingDied(ComponentName name)
+        {
+            Log.i(toString(), "Binding died to " + this.name);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name)
+        {
+            Log.i(toString(), "Successful unbinding to " + this.name);
+        }
+    }
+
+    /**
+     * The collection of currently-bound plugin services
+     */
+    private Map<String, ServiceConnection> mBoundServices;
 
     /**
      * Constructor
@@ -99,7 +150,27 @@ public class PluginHandler
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        setup();
+        mBoundServices = new HashMap<>();
+    }
+
+    /**
+     * Adds or replaces a single item in this ArrayAdapter
+     * @param item
+     */
+    public void upsert(PluginInfo item)
+    {
+        int index = getPosition(item);
+        if (index < 0)
+        {
+            add(item);
+        }
+        else
+        {
+            setNotifyOnChange(false);
+            remove(item);
+            setNotifyOnChange(true);
+            insert(item, index);
+        }
     }
 
     @Override
@@ -255,12 +326,15 @@ public class PluginHandler
 
         if (enable)
         {
+            // make sure plugin is running
+            bindPlugin(plugin.packageName, plugin.className);
             // initiate plugin action
             triggerAction(position);
         }
         else
         {
             // actively stop plugin service if switched off
+            unbindPlugin(plugin.packageName);
             stopPlugin(position);
         }
     }
@@ -274,8 +348,81 @@ public class PluginHandler
         Intent intent = new Intent(Plugin.IDENTIFY);
         intent.addCategory(Plugin.REQUEST);
         intent.putExtras(svc.getPluginInfo().toBundle());
-        Log.i(toString(), ">IDENTIFY: " + intent);
-        getContext().sendBroadcast(intent);
+
+        List<ResolveInfo> receiverPlugins = getContext().getPackageManager().queryBroadcastReceivers(intent, 0);
+        List<ResolveInfo> servicePlugins = getContext().getPackageManager().queryIntentServices(intent, 0);
+        Set<String> discoveredPlugins = new HashSet<>();
+
+        // Binds the Plugin service into memory
+        for (ResolveInfo plugin: servicePlugins)
+        {
+            if (plugin.serviceInfo != null && !discoveredPlugins.contains(plugin.serviceInfo.packageName))
+            {
+                discoveredPlugins.add(plugin.serviceInfo.packageName);
+
+                ComponentName component = new ComponentName(plugin.serviceInfo.packageName, plugin.serviceInfo.name);
+                Intent explicitIntent = intent.setComponent(component);
+                Log.i(toString(), ">IDENTIFY: " + intent);
+
+                // bind the service to make sure it stays in memory
+                bindPlugin(plugin.serviceInfo.packageName, plugin.serviceInfo.name);
+
+                // send the actual command
+                getContext().startService(explicitIntent);
+            }
+        }
+
+        for (ResolveInfo plugin: receiverPlugins)
+        {
+            if (plugin.activityInfo != null && !discoveredPlugins.contains(plugin.activityInfo.packageName))
+            {
+                discoveredPlugins.add(plugin.serviceInfo.packageName);
+                ComponentName component = new ComponentName(plugin.activityInfo.packageName, plugin.activityInfo.name);
+                Intent explicitIntent = intent.setComponent(component);
+                Log.i(toString(), ">IDENTIFY: " + intent);
+                getContext().sendBroadcast(explicitIntent);
+            }
+        }
+    }
+
+    /**
+     * Binds the given plugin service into memory
+     *
+     * @param packageName The package name for the plugin
+     * @param className The class name for the Plugin service in that package
+     */
+    private void bindPlugin(String packageName, String className)
+    {
+        if (!mBoundServices.containsKey(packageName))
+        {
+            Intent intent = new Intent(Plugin.IDENTIFY);
+            intent.addCategory(Plugin.REQUEST);
+            ComponentName component = new ComponentName(packageName, className);
+            intent.setComponent(component);
+
+            ServiceConnection serviceConnection = new BoundServiceConnection(packageName);
+            getContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+            mBoundServices.put(packageName, serviceConnection);
+        }
+    }
+
+    /**
+     * Disconnects the service binding to this plugin
+     *
+     * @param packageName The package name for the plugin
+     */
+    private void unbindPlugin(String packageName) {
+        if (mBoundServices.containsKey(packageName))
+        {
+            try
+            {
+                getContext().unbindService(mBoundServices.get(packageName));
+            } catch (Exception e)
+            {
+                // error while disconnecting
+            }
+            mBoundServices.remove(packageName);
+        }
     }
 
     /**
@@ -289,6 +436,7 @@ public class PluginHandler
         PluginInfo plugin = getItem(position);
         intent.setClassName(plugin.packageName, plugin.className);
         Log.i(toString(), "Stop service: " + intent);
+        unbindPlugin(plugin.packageName);
         getContext().stopService(intent);
     }
 

@@ -124,4 +124,27 @@ public class PluginInfo
     {
         return className;
     }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PluginInfo that = (PluginInfo) o;
+
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (packageName != null ? !packageName.equals(that.packageName) : that.packageName != null)
+            return false;
+        return className != null ? className.equals(that.className) : that.className == null;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (packageName != null ? packageName.hashCode() : 0);
+        result = 31 * result + (className != null ? className.hashCode() : 0);
+        return result;
+    }
 }
