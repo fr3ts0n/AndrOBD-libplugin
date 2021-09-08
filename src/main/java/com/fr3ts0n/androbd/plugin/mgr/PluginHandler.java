@@ -76,9 +76,12 @@ public class PluginHandler
                 // get preferred enable/disable state from settings
                 plugin.enabled = mPrefs.getBoolean(plugin.className, true);
                 // add (or replace) plugin in the list
-                upsert(plugin);
+                boolean previouslyFound = upsert(plugin);
                 // set current enabled/disabled state (to stop disabled services)
-                setPluginEnabled(getPosition(plugin), plugin.enabled);
+                if (!previouslyFound)
+                {
+                    setPluginEnabled(getPosition(plugin), plugin.enabled);
+                }
             }
 
             intent.setClass(getContext(), PluginDataService.class);
@@ -155,21 +158,22 @@ public class PluginHandler
 
     /**
      * Adds or replaces a single item in this ArrayAdapter
-     * @param item
+     * @param item The item to insert or replace
+     * @return true if the item was replaced, false if it was added as a new item
      */
-    public void upsert(PluginInfo item)
+    public boolean upsert(PluginInfo item)
     {
         int index = getPosition(item);
         if (index < 0)
         {
             add(item);
+            return false;
         }
         else
         {
-            setNotifyOnChange(false);
             remove(item);
-            setNotifyOnChange(true);
             insert(item, index);
+            return true;
         }
     }
 
@@ -376,7 +380,7 @@ public class PluginHandler
         {
             if (plugin.activityInfo != null && !discoveredPlugins.contains(plugin.activityInfo.packageName))
             {
-                discoveredPlugins.add(plugin.serviceInfo.packageName);
+                discoveredPlugins.add(plugin.activityInfo.packageName);
                 ComponentName component = new ComponentName(plugin.activityInfo.packageName, plugin.activityInfo.name);
                 Intent explicitIntent = intent.setComponent(component);
                 Log.i(toString(), ">IDENTIFY: " + intent);
