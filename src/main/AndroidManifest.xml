@@ -12,6 +12,11 @@
         <service
             android:name="com.fr3ts0n.androbd.plugin.mgr.PluginDataService"
             android:exported="true">
+            <!-- Allow other plugins to bind the main plugin service to keep it alive -->
+            <intent-filter>
+                <action android:name="com.fr3ts0n.androbd.plugin.IDENTIFY" />
+                <category android:name="com.fr3ts0n.androbd.plugin.REQUEST" />
+            </intent-filter>
         </service>
 
     </application>

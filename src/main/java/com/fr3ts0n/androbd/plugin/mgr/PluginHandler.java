@@ -356,6 +356,7 @@ public class PluginHandler
         List<ResolveInfo> receiverPlugins = getContext().getPackageManager().queryBroadcastReceivers(intent, 0);
         List<ResolveInfo> servicePlugins = getContext().getPackageManager().queryIntentServices(intent, 0);
         Set<String> discoveredPlugins = new HashSet<>();
+        discoveredPlugins.add(getContext().getPackageName());       // don't try to discover the host application
 
         // Binds the Plugin service into memory
         for (ResolveInfo plugin: servicePlugins)
