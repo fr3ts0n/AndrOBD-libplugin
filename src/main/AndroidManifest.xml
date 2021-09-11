@@ -4,6 +4,8 @@
 
     <!-- to keep service running even when screen is inactive -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <!-- to allow service to open windows / start Activities -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
         android:allowBackup="true"

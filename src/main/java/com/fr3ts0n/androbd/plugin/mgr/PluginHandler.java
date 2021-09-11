@@ -338,7 +338,6 @@ public class PluginHandler
         else
         {
             // actively stop plugin service if switched off
-            unbindPlugin(plugin.packageName);
             stopPlugin(position);
         }
     }
@@ -353,34 +352,14 @@ public class PluginHandler
         intent.addCategory(Plugin.REQUEST);
         intent.putExtras(svc.getPluginInfo().toBundle());
 
+        /*
+         * Send explicit broadcast message
+         */
         List<ResolveInfo> receiverPlugins = getContext().getPackageManager().queryBroadcastReceivers(intent, 0);
-        List<ResolveInfo> servicePlugins = getContext().getPackageManager().queryIntentServices(intent, 0);
-        Set<String> discoveredPlugins = new HashSet<>();
-
-        // Binds the Plugin service into memory
-        for (ResolveInfo plugin: servicePlugins)
-        {
-            if (plugin.serviceInfo != null && !discoveredPlugins.contains(plugin.serviceInfo.packageName))
-            {
-                discoveredPlugins.add(plugin.serviceInfo.packageName);
-
-                ComponentName component = new ComponentName(plugin.serviceInfo.packageName, plugin.serviceInfo.name);
-                Intent explicitIntent = intent.setComponent(component);
-                Log.i(toString(), ">IDENTIFY: " + intent);
-
-                // bind the service to make sure it stays in memory
-                bindPlugin(plugin.serviceInfo.packageName, plugin.serviceInfo.name);
-
-                // send the actual command
-                getContext().startService(explicitIntent);
-            }
-        }
-
         for (ResolveInfo plugin: receiverPlugins)
         {
-            if (plugin.activityInfo != null && !discoveredPlugins.contains(plugin.activityInfo.packageName))
+            if (plugin.activityInfo != null)
             {
-                discoveredPlugins.add(plugin.activityInfo.packageName);
                 ComponentName component = new ComponentName(plugin.activityInfo.packageName, plugin.activityInfo.name);
                 Intent explicitIntent = intent.setComponent(component);
                 Log.i(toString(), ">IDENTIFY: " + intent);
