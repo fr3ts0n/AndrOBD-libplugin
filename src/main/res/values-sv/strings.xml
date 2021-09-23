@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="donation">Stöd projekt …</string>
+    <string name="release_history">Historik för utgåvan …</string>
+    <string name="identify_plugins">Identifiera insticksprogram</string>
+    <string name="perform_action">Utför åtgärd</string>
+    <string name="configure">Konfigurera</string>
+</resources>
