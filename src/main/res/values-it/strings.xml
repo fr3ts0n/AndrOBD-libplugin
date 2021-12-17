@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="configure">Configura</string>
+    <string name="perform_action">Esegui azione</string>
+    <string name="identify_plugins">Identifica i plugin</string>
+    <string name="release_history">Cronologia delle versioni …</string>
+    <string name="donation">Sostieni il progetto …</string>
+</resources>
