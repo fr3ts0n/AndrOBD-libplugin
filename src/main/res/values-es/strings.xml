@@ -1,2 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="configure">Configurar</string>
+    <string name="identify_plugins">Identificar extensión</string>
+    <string name="donation">Soportar el proyecto..</string>
+</resources>
