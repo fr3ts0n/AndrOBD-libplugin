@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="configure">Configurar</string>
+    <string name="perform_action">Realizar ação</string>
+    <string name="release_history">Histórico de lançamentos</string>
+    <string name="donation">Apoiar projeto…</string>
+</resources>
