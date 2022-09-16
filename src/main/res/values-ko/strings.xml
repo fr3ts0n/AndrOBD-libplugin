@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="configure">구성하기</string>
+    <string name="configure">구성</string>
     <string name="perform_action">작업 수행</string>
     <string name="identify_plugins">플러그인 식별</string>
     <string name="release_history">개정 이력…</string>
