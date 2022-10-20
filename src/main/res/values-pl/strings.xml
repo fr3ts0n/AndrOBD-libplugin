@@ -2,7 +2,7 @@
 <resources>
     <string name="donation">Wesprzyj projekt …</string>
     <string name="release_history">Historia wydań…</string>
-    <string name="identify_plugins">Identyfikacja wtyczek</string>
+    <string name="identify_plugins">Zidentyfikuj wtyczki</string>
     <string name="perform_action">Wykonaj działanie</string>
     <string name="configure">Skonfiguruj</string>
 </resources>
