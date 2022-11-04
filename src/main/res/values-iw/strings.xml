@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="perform_action">ביצוע פעולה</string>
+    <string name="identify_plugins">זיהוי תוספים</string>
+    <string name="release_history">היסטוריית מהדורות…</string>
+    <string name="donation">תמיכה במיזם…</string>
+</resources>
