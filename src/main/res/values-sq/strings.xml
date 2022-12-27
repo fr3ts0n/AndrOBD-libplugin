@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="perform_action">Kryeni veprim</string>
+    <string name="identify_plugins">Identifikoni shtojca</string>
+    <string name="release_history">Historik hedhjesh në qarkullim…</string>
+    <string name="donation">Përkrahni projektin…</string>
+</resources>
