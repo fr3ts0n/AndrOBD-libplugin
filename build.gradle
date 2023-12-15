@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.4'
+        classpath 'com.android.tools.build:gradle:8.2.0'
     }
 }
 
@@ -31,15 +31,9 @@ android {
             // Override lint error on targetSdkVersion
             abortOnError false
         }
-        versionCode 10201
-        versionName 'V1.2.1'
     }
 
     buildTypes {
-        configureEach {
-            resValue "string", "app_version", defaultConfig.versionName
-        }
-
         release {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
