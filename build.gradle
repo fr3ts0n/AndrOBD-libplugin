@@ -19,7 +19,7 @@ allprojects {
 
 android {
     namespace "com.fr3ts0n.androbd.plugin"
-    compileSdk 30
+    compileSdk 34
     defaultConfig {
         minSdkVersion 15
         // SDK 25 to allow background service mechanism for plugins
