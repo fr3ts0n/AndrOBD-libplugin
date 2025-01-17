@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="configure">Seadista</string>
+    <string name="identify_plugins">Tuvasta lisamoodulid</string>
+    <string name="perform_action">Tee toiming</string>
+    <string name="release_history">Versioonide ajalugu…</string>
+    <string name="donation">Toeta meie arendusprojekti…</string>
 </resources>
