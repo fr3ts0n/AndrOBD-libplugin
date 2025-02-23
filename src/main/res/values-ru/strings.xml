@@ -1,2 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="configure">Конфигурация</string>
+    <string name="perform_action">Выполнить действие</string>
+    <string name="identify_plugins">Определить плагины</string>
+    <string name="release_history">История версий …</string>
+    <string name="donation">Поддержать проект</string>
+</resources>

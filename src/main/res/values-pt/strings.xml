@@ -2,6 +2,7 @@
 <resources>
     <string name="configure">Configurar</string>
     <string name="perform_action">Realizar ação</string>
-    <string name="release_history">Histórico de lançamentos</string>
+    <string name="release_history">Histórico de lançamentos…</string>
     <string name="donation">Apoiar projeto…</string>
+    <string name="identify_plugins">Identificar plugins</string>
 </resources>
