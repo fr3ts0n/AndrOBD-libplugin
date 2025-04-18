@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="configure">Configurar</string>
-    <string name="perform_action">Realitzar acció</string>
-    <string name="identify_plugins">Identificar plugins</string>
-    <string name="release_history">Historial de publicació…</string>
-    <string name="donation">Ajudar al projecte…</string>
-</resources>
