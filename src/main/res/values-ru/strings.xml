@@ -4,5 +4,5 @@
     <string name="perform_action">Выполнить действие</string>
     <string name="identify_plugins">Определить плагины</string>
     <string name="release_history">История версий …</string>
-    <string name="donation">Поддержать проект</string>
+    <string name="donation">Поддержать проект…</string>
 </resources>
