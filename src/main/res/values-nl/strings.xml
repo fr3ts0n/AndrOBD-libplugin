@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="configure">Configureren</string>
-    <string name="perform_action">Voer actie uit</string>
-    <string name="identify_plugins">Identificeer extensies</string>
-    <string name="release_history">Release geschiedenis …</string>
-    <string name="donation">Steun het project …</string>
+    <string name="configure">Instellen</string>
+    <string name="perform_action">Actie uitvoeren</string>
+    <string name="identify_plugins">Plugins indentificeren</string>
+    <string name="release_history">Versie geschiedenis …</string>
+    <string name="donation">Ondersteun het project …</string>
 </resources>
