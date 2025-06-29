@@ -2,7 +2,7 @@
 <resources>
     <string name="configure">Configurar</string>
     <string name="identify_plugins">Identificar plugins</string>
-    <string name="donation">Soportar el proyecto …</string>
+    <string name="donation">Apoyar al proyecto …</string>
     <string name="perform_action">Realizar acción</string>
     <string name="release_history">Historial de lanzamiento …</string>
 </resources>
