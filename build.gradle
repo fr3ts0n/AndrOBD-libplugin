@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.4.2'
+        classpath 'com.android.tools.build:gradle:8.11.1'
     }
 }
 
@@ -19,7 +19,7 @@ allprojects {
 
 android {
     namespace "com.fr3ts0n.androbd.plugin"
-    compileSdk 34
+    compileSdk 36
     defaultConfig {
         minSdkVersion 15
         // SDK 25 to allow background service mechanism for plugins
