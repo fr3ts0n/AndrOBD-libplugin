@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="configure">Configurer</string>
+    <string name="donation">Projets supports …</string>
+    <string name="release_history">Historique des versions …</string>
+    <string name="identify_plugins">Identifier plugins</string>
+</resources>
