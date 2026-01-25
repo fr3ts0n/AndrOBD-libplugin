@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="configure">Määritä</string>
+    <string name="configure">Aseta</string>
     <string name="perform_action">Suorita toimenpide</string>
     <string name="identify_plugins">Tunnista liitännäiset</string>
     <string name="release_history">Julkaisuhistoria…</string>
