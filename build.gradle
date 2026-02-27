@@ -1,51 +1,29 @@
 apply plugin: 'com.android.library'
 
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.4.2'
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
 android {
-    namespace "com.fr3ts0n.androbd.plugin"
-    compileSdk 34
+    namespace = "com.fr3ts0n.androbd.plugin"
+    compileSdk 36
+
+    buildFeatures {
+        resValues = true
+        buildConfig = true
+    }
+
     defaultConfig {
         minSdkVersion 15
         // SDK 25 to allow background service mechanism for plugins
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 25
+        versionCode = 10201
+        versionName = 'V1.2.1'
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        resValue "string", "app_version", versionName
 
         lintOptions {
             // Override lint error on targetSdkVersion
-            abortOnError false
+            abortOnError = false
         }
-        versionCode 10201
-        versionName 'V1.2.1'
-    }
-
-    buildTypes {
-        configureEach {
-            resValue "string", "app_version", defaultConfig.versionName
-        }
-
-        release {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-    }
-    productFlavors {
     }
 }
