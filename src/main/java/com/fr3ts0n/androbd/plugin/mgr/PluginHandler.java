@@ -61,7 +61,7 @@ public class PluginHandler
     /**
      * the receiver to receive IDENTIFY responses
      */
-    private BroadcastReceiver receiver = new BroadcastReceiver()
+    private final BroadcastReceiver receiver = new BroadcastReceiver()
     {
         @Override
         public void onReceive(Context context, Intent intent)
@@ -92,7 +92,7 @@ public class PluginHandler
     /**
      * the listener to receive bindService callbacks
      */
-    private class BoundServiceConnection implements ServiceConnection
+    private static class BoundServiceConnection implements ServiceConnection
     {
         private final String name;
         public BoundServiceConnection(String name)
@@ -128,7 +128,7 @@ public class PluginHandler
     /**
      * The collection of currently-bound plugin services
      */
-    private Map<String, ServiceConnection> mBoundServices;
+    private final Map<String, ServiceConnection> mBoundServices;
 
     /**
      * Constructor
@@ -231,7 +231,7 @@ public class PluginHandler
                 getContext(),
                 receiver,
                 flt,
-                androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED);
+                androidx.core.content.ContextCompat.RECEIVER_EXPORTED);
 
         // trigger plugin search
         identifyPlugins();
@@ -355,21 +355,7 @@ public class PluginHandler
         Intent intent = new Intent(Plugin.IDENTIFY);
         intent.addCategory(Plugin.REQUEST);
         intent.putExtras(svc.getPluginInfo().toBundle());
-
-        /*
-         * Send explicit broadcast message
-         */
-        List<ResolveInfo> receiverPlugins = getContext().getPackageManager().queryBroadcastReceivers(intent, 0);
-        for (ResolveInfo plugin: receiverPlugins)
-        {
-            if (plugin.activityInfo != null)
-            {
-                ComponentName component = new ComponentName(plugin.activityInfo.packageName, plugin.activityInfo.name);
-                Intent explicitIntent = intent.setComponent(component);
-                Log.i(toString(), ">IDENTIFY: " + intent);
-                getContext().sendBroadcast(explicitIntent);
-            }
-        }
+        getContext().sendBroadcast(intent);
     }
 
     /**
