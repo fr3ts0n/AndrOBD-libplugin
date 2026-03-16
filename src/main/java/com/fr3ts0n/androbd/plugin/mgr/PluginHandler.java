@@ -227,7 +227,11 @@ public class PluginHandler
         flt.addAction(Plugin.IDENTIFY);
         flt.addAction(Plugin.DATALIST);
         flt.addAction(Plugin.DATA);
-        getContext().registerReceiver(receiver, flt);
+        androidx.core.content.ContextCompat.registerReceiver(
+                getContext(),
+                receiver,
+                flt,
+                androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED);
 
         // trigger plugin search
         identifyPlugins();

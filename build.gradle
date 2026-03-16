@@ -11,11 +11,9 @@ android {
 
     defaultConfig {
         minSdkVersion 15
-        // SDK 25 to allow background service mechanism for plugins
-        //noinspection ExpiredTargetSdkVersion
-        targetSdkVersion 25
-        versionCode = 10201
-        versionName = 'V1.2.1'
+        targetSdkVersion 36
+        versionCode = 10202
+        versionName = 'V1.2.2'
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -26,4 +24,7 @@ android {
             abortOnError = false
         }
     }
+}
+dependencies {
+    implementation 'androidx.core:core:1.12.0'
 }
