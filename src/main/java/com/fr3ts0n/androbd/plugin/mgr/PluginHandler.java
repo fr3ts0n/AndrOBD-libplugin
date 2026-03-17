@@ -355,7 +355,21 @@ public class PluginHandler
         Intent intent = new Intent(Plugin.IDENTIFY);
         intent.addCategory(Plugin.REQUEST);
         intent.putExtras(svc.getPluginInfo().toBundle());
-        getContext().sendBroadcast(intent);
+
+        /*
+         * Send explicit broadcast message
+         */
+        List<ResolveInfo> receiverPlugins = getContext().getPackageManager().queryBroadcastReceivers(intent, 0);
+        for (ResolveInfo plugin: receiverPlugins)
+        {
+            if (plugin.activityInfo != null)
+            {
+                ComponentName component = new ComponentName(plugin.activityInfo.packageName, plugin.activityInfo.name);
+                Intent explicitIntent = intent.setComponent(component);
+                Log.i(toString(), ">IDENTIFY: " + intent);
+                getContext().sendBroadcast(explicitIntent);
+            }
+        }
     }
 
     /**
