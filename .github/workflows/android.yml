@@ -20,4 +20,4 @@ jobs:
       with:
         java-version: 17
     - name: Build with Gradle
-      run: gradle build
+      run: ./gradlew build
