@@ -3,6 +3,6 @@
     <string name="configure">Konfigurálás</string>
     <string name="perform_action">Művelet végrehajtása</string>
     <string name="identify_plugins">Bővítmények azonosítása</string>
-    <string name="release_history">Kiadási előzmények …</string>
+    <string name="release_history">Kiadási előzmények…</string>
     <string name="donation">A projekt támogatása …</string>
 </resources>
