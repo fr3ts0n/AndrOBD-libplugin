@@ -1,10 +1,13 @@
 package com.fr3ts0n.androbd.plugin.mgr;
 
-import android.app.ListActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Switch;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.fr3ts0n.androbd.plugin.Plugin;
 import com.fr3ts0n.androbd.plugin.R;
@@ -19,10 +22,16 @@ import com.fr3ts0n.androbd.plugin.R;
  * - Allow manual triggering plugin action
  */
 public class PluginManager
-        extends ListActivity
+        extends AppCompatActivity
         implements Plugin.DataReceiver
 {
     public static PluginHandler pluginHandler = null;
+
+    /**
+     * ListActivity auto-managed this via the android:id/list convention;
+     * AppCompatActivity requires the same lookup done explicitly.
+     */
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -68,7 +77,28 @@ public class PluginManager
     protected void setManagerView()
     {
         setContentView(R.layout.content_main);
-        setListAdapter(pluginHandler);
+        listView = findViewById(android.R.id.list);
+        listView.setAdapter(pluginHandler);
+    }
+
+    /**
+     * Compatibility accessors matching ListActivity's own API, so subclasses
+     * (MainActivity) that relied on the inherited getListView()/getListAdapter()/
+     * setListAdapter() need no changes themselves.
+     */
+    public ListView getListView()
+    {
+        return listView;
+    }
+
+    public ListAdapter getListAdapter()
+    {
+        return listView.getAdapter();
+    }
+
+    public void setListAdapter(ListAdapter adapter)
+    {
+        listView.setAdapter(adapter);
     }
 
     /**
@@ -89,7 +119,7 @@ public class PluginManager
      */
     public void sendConfigure(View view)
     {
-        int pos = getListView().getPositionForView(view);
+        int pos = listView.getPositionForView(view);
         pluginHandler.triggerConfiguration(pos);
     }
 
@@ -100,7 +130,7 @@ public class PluginManager
      */
     public void sendPerformAction(View view)
     {
-        int pos = getListView().getPositionForView(view);
+        int pos = listView.getPositionForView(view);
         pluginHandler.triggerAction(pos);
     }
 
@@ -111,7 +141,7 @@ public class PluginManager
      */
     public void setPluginEnabled(View view)
     {
-        int pos = getListView().getPositionForView(view);
+        int pos = listView.getPositionForView(view);
         pluginHandler.setPluginEnabled(pos, ((Switch) view).isChecked());
     }
 
