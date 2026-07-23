@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:icon="@android:drawable/ic_menu_manage"
+                  android:icon="@drawable/ic_build"
                   android:title="@string/app_name">
     <PreferenceScreen
-        android:icon="@android:drawable/ic_menu_info_details"
+        android:icon="@drawable/ic_info"
         android:summary="@string/app_version"
         android:title="@string/app_name"
         >
         <Preference
-            android:icon="@android:drawable/ic_menu_info_details"
+            android:icon="@drawable/ic_info"
             android:title="@string/app_name"
             android:summary="@string/copyright_fr3ts0n"
             >
@@ -17,7 +17,7 @@
                 android:data="@string/url_app_mainpage"/>
         </Preference>
         <Preference
-            android:icon="@android:drawable/ic_menu_info_details"
+            android:icon="@drawable/ic_info"
             android:summary="@string/app_version"
             android:title="@string/release_history"
             >
