@@ -82,6 +82,26 @@ public class PluginManager
     }
 
     /**
+     * Re-resolve the android:id/list lookup whenever a subclass (e.g.
+     * MainActivity) replaces the content view directly, rather than going
+     * through setManagerView(). ListActivity did this generically for any
+     * content view; AppCompatActivity has no equivalent, and the previous
+     * findViewById() call in setManagerView() alone left listView null for
+     * any other setContentView(View) call, since it's only reached from
+     * that one method.
+     */
+    @Override
+    public void setContentView(View view)
+    {
+        super.setContentView(view);
+        ListView newListView = findViewById(android.R.id.list);
+        if (newListView != null)
+        {
+            listView = newListView;
+        }
+    }
+
+    /**
      * Compatibility accessors matching ListActivity's own API, so subclasses
      * (MainActivity) that relied on the inherited getListView()/getListAdapter()/
      * setListAdapter() need no changes themselves.
