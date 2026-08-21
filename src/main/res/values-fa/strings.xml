@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="configure">تنظیمات</string>
-    <string name="perform_action">"اعمال  دستور"</string>
+    <string name="perform_action">دستور کار</string>
+    <string name="donation">طرح ثابت</string>
+    <string name="identify_plugins">اف اس ای</string>
 </resources>
